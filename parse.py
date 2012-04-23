@@ -6,6 +6,8 @@ reserved = {
     'or' : 'OR',
     'and': 'AND',
     'not': 'NOT',
+    'true': 'TRUE',
+    'false': 'FALSE',
 }
 
 tokens = [
@@ -34,6 +36,7 @@ def t_NUMBER(t):
 def t_ID(t):
     r'\w+'
     t.type = reserved.get(t.value, 'ID')
+    t.value = 'true' if t.type == 'TRUE' else 'false'
     return t
 
 t_ignore = ' \t\n'
@@ -77,8 +80,8 @@ def p_expression_and(p):
     p[0] = ssast.Expr(ssast.BinOp(ssast.Op('And'), p[3], p[4]))
 
 def p_expression_if(p):
-    'expression : LPAREN IF expression expression RPAREN'
-    p[0] = ssast.Expr(ssast.BinOp(ssast.Op('If'), p[3], p[4]))
+    'expression : LPAREN IF expression expression expression RPAREN'
+    p[0] = ssast.Expr(ssast.If(ssast.Expr(p[3]), ssast.Expr(p[4]), ssast.Expr(p[5])))
 
 def p_expression_fact(p):
     'expression : LPAREN FACT expression RPAREN'
@@ -88,9 +91,14 @@ def p_expression_not(p):
     'expression : LPAREN NOT expression RPAREN'
     p[0] = ssast.Expr(ssast.UnaOp(ssast.Op('Not'), p[3]))
 
-def p_expression_val(p):
+def p_expression_int(p):
     'expression : NUMBER'
     p[0] = ssast.Expr(ssast.Val(ssast.Int(p[1])))
+
+def p_expression_boolean(p):
+    '''expression : TRUE
+                  | FALSE'''
+    p[0] = ssast.Expr(ssast.Val(ssast.Boolean(p[1])))
 
 parser = yacc.yacc()
 

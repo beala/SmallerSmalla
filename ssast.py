@@ -25,6 +25,15 @@ class UnaOp(Node):
         return "UnaOp(%s, %s)" % (self.op, self.l)
     def __str__(self):
         return "Unary:{op:inj[Op](%s:()), l:%s}" % (self.op, self.l)
+class If(Node):
+    def __init__(self, guard, then, else_):
+        self.guard = guard
+        self.then = then
+        self.else_ = else_
+    def __repr__(self):
+        return "If(%s, %s, %s)" % (self.guard, self.then, self.else_)
+    def __str__(self):
+        return "If:{guard:%s, then:%s, else_:%s}" % (self.guard, self.then, self.else_)
 class Val(Node):
     def __init__(self, val):
         self.val = val
@@ -39,6 +48,13 @@ class Int(Node):
         return "Int(%d)" % self.i
     def __str__(self):
         return "I:%d" % self.i
+class Boolean(Node):
+    def __init__(self,b):
+        self.b = b
+    def __repr__(self):
+        return "Boolean(%d)" % self.b
+    def __str__(self):
+        return "B:%s" % self.b
 class Op(Node):
     def __init__(self, op):
         self.op = op
