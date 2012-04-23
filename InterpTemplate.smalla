@@ -64,4 +64,4 @@ def eval(e: Expr): Val = unfold(e) match[Val] {
     }
     case If:f => if(vtob(eval(f.guard))) eval(f.then) else eval(f.else_)
 }
-in printval(eval(e5))
+in printval(eval(e))

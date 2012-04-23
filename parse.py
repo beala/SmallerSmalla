@@ -85,7 +85,7 @@ def p_expression_and(p):
 
 def p_expression_if(p):
     'expression : LPAREN IF expression expression expression RPAREN'
-    p[0] = ssast.Expr(ssast.If(ssast.Expr(p[3]), ssast.Expr(p[4]), ssast.Expr(p[5])))
+    p[0] = ssast.Expr(ssast.If(p[3], p[4], p[5]))
 
 def p_expression_fact(p):
     'expression : LPAREN FACT expression RPAREN'
