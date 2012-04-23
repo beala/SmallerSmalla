@@ -1,6 +1,7 @@
 import ply.lex as lex
 import sys
 
+# Parser
 reserved = {
     'if' : 'IF',
     'or' : 'OR',
@@ -16,7 +17,6 @@ tokens = [
         'MINUS',
         'MULT',
         'FACT',
-        'ID',
         'LPAREN',
         'RPAREN',
 ] + list(reserved.values())
@@ -29,14 +29,18 @@ t_LPAREN  = r'\('
 t_RPAREN  = r'\)'
 
 def t_NUMBER(t):
-    r'\d+'
+    r'-?\d+'
     t.value = int(t.value)
     return t
 
-def t_ID(t):
+# Tokens for reserved words.
+def t_RES(t):
     r'\w+'
-    t.type = reserved.get(t.value, 'ID')
-    t.value = 'true' if t.type == 'TRUE' else 'false'
+    t.type = reserved.get(t.value)
+    if t.type == 'TRUE':
+        t.value = 'true'
+    elif t.type == 'FALSE':
+        t.value = 'false'
     return t
 
 t_ignore = ' \t\n'
@@ -47,7 +51,7 @@ def t_error(t):
     print "Illegal character '%s'" % t.value[0]
     t.lexer.skip(1)
 
-
+print "Lexing..."
 lexer = lex.lex()
 
 lexer.input(sys.argv[1])
@@ -55,8 +59,8 @@ lexer.input(sys.argv[1])
 for tok in lexer:
     print tok
 
+# Parser
 import ply.yacc as yacc
-import math
 import ssast
 
 def p_expression_plus(p):
@@ -100,6 +104,16 @@ def p_expression_boolean(p):
                   | FALSE'''
     p[0] = ssast.Expr(ssast.Val(ssast.Boolean(p[1])))
 
+def p_error(p):
+    print >> sys.stderr, "ERROR: Syntax error. Parser face-planted on this token: %s" % p
+
+print "Parsing..."
 parser = yacc.yacc()
 
-print parser.parse(sys.argv[1])
+ast = parser.parse(sys.argv[1])
+if ast:
+    print ast
+
+print "Writing program..."
+itemplate = open("InterpTemplate.smalla").read()
+open(sys.argv[2], 'w').write(itemplate % ast)

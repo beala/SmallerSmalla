@@ -1,0 +1,67 @@
+type Op = [Plus:Unit,
+           Minus:Unit,
+           Mult:Unit,
+           Not:Unit,
+           And:Unit,
+           Or:Unit,
+           Fact:Unit,
+           Print:Unit]
+in
+type Val = [B:Boolean,
+            I:Int]
+in
+type Expr = rec T.[Binary: {op: Op, l:T, r:T},
+                   Unary: {op: Op, l:T},
+                   Val: Val,
+                   If: {guard:T, then:T, else_:T},
+                   E:T]
+in
+type ExprUf = [Binary: {op: Op, l:Expr, r:Expr},
+               Unary: {op: Op, l:Expr},
+               Val: Val,
+               If: {guard:Expr, then:Expr, else_:Expr},
+               E:Expr]
+in
+val e: Expr = %s
+in
+/* Val to Boolean */
+def vtob(v:Val):Boolean = v match[Boolean]{
+    case I:i => if (i == 0) false else true
+    case B:b => b
+}
+in
+/* Val to Int */
+def vtoi(v:Val):Int = v match[Int]{
+    case I:i => i
+    case B:b => if (b) 1 else 0
+}
+in
+/* Boolean to Val */
+def btov(name b:Boolean):Val = inj[Val](B:(b)) in
+/* Int to Val */
+def itov(name i:Int):Val = inj[Val](I:(i)) in
+/* Print a Val, return Unit */
+def printval(v:Val):Unit = v match[Unit]{
+    case I:i => print(i)
+    case B:b => print(b)
+}
+in
+/* Factorial */
+def fact(i:Int):Int = if(i == 0) 1 else i * fact(i-1) in
+def eval(e: Expr): Val = unfold(e) match[Val] {
+    case Val:v => v
+    case Binary:b => b.op match[Val] {
+        case Plus:op => itov(vtoi(eval(b.l)) + vtoi(eval(b.r)))
+        case Minus:op => itov(vtoi(eval(b.l)) - vtoi(eval(b.r)))
+        case Mult:op => itov(vtoi(eval(b.l)) * vtoi(eval(b.r)))
+        case And:op => btov(vtob(eval(b.l)) && vtob(eval(b.r)))
+        case Or:op => btov(vtob(eval(b.l)) || vtob(eval(b.r)))
+    }
+    case Unary:u => u.op match[Val] {
+        case Not:op => btov((if(vtob(eval(u.l)) == true) false else true))
+        case Print:op => {print(eval(u.l)); eval(u.l)}
+        case Fact:op => itov(fact(vtoi(eval(u.l))))
+    }
+    case If:f => if(vtob(eval(f.guard))) eval(f.then) else eval(f.else_)
+}
+in printval(eval(e5))

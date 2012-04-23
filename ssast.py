@@ -16,7 +16,7 @@ class BinOp(Node):
     def __repr__(self):
         return "BinOp(%s, %s, %s)" % (self.val, self.op, self.expr)
     def __str__(self):
-        return "Binary:{op:inj[Op](%s:()), l:%s, r:%s}" % (self.op, self.l, self.r)
+        return "Binary:{op:%s, l:%s, r:%s}" % (self.op, self.l, self.r)
 class UnaOp(Node):
     def __init__(self, op, l):
         self.op = op
@@ -61,7 +61,7 @@ class Op(Node):
     def __repr__(self):
         return "Op('%s')" % self.op
     def __str__(self):
-        return self.op
+        return "inj[Op](%s:())" % self.op
 class ParseError(Exception):
     def __init__(self, actual, expect):
         self.actual = actual
