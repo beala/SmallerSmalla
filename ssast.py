@@ -24,7 +24,7 @@ class UnaOp(Node):
     def __repr__(self):
         return "UnaOp(%s, %s)" % (self.op, self.l)
     def __str__(self):
-        return "Unary:{op:inj[Op](%s:()), l:%s}" % (self.op, self.l)
+        return "Unary:{op:%s, l:%s}" % (self.op, self.l)
 class If(Node):
     def __init__(self, guard, then, else_):
         self.guard = guard
