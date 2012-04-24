@@ -9,6 +9,7 @@ class SmallerSmallaLexer(object):
         'not': 'NOT',
         'true': 'TRUE',
         'false': 'FALSE',
+        'fact': "FACT",
     }
 
     tokens = [
@@ -16,7 +17,6 @@ class SmallerSmallaLexer(object):
             'PLUS',
             'MINUS',
             'MULT',
-            'FACT',
             'LPAREN',
             'RPAREN',
     ] + list(reserved.values())
@@ -97,7 +97,7 @@ class SmallerSmallaParser(object):
 
     def p_expression_fact(self, p):
         'expression : LPAREN FACT expression RPAREN'
-        p[0] = ssast.Expr(ssast.UnaOp(ssast.Op('!'), p[3]))
+        p[0] = ssast.Expr(ssast.UnaOp(ssast.Op('Fact'), p[3]))
 
     def p_expression_not(self, p):
         'expression : LPAREN NOT expression RPAREN'
