@@ -48,4 +48,5 @@ This adds `1` and `1` if `~(true and false)` is true (it is) otherwise it adds `
 
 ###Credits###
 Bor-Yuh Chang wrote most of the Smalla implementation (`smalla.jar`)
+
 The [PLY package](http://www.dabeaz.com/ply/ply.html) was used for parsing.
