@@ -1,5 +1,12 @@
 import ply.lex as lex
 import sys
+import argparse
+
+# Argument Parser
+aparser = argparse.ArgumentParser(description='The SmallerSmalla Compiler/AST Generator')
+aparser.add_argument('input', help="A SmallerSmalla expression.")
+aparser.add_argument('out_file', help="The output file.")
+args = aparser.parse_args()
 
 class SmallerSmallaLexer(object):
     reserved = {
@@ -57,7 +64,7 @@ class SmallerSmallaLexer(object):
 print "Lexing..."
 l = SmallerSmallaLexer()
 l.build()
-l.lexer.input(sys.argv[1])
+l.lexer.input(args.input)
 
 #for tok in l.lexer:
 #    print tok
@@ -121,10 +128,11 @@ class SmallerSmallaParser(object):
 print "Parsing..."
 parser = SmallerSmallaParser(l.tokens).build()
 
-ast = parser.parse(sys.argv[1])
+ast = parser.parse(args.input)
 if ast:
-    print ast
+    print "AST: " + str(ast)
 
 print "Writing program..."
 itemplate = open("InterpTemplate.smalla").read()
-open(sys.argv[2], 'w').write(itemplate % ast)
+open(args.out_file, 'w').write(itemplate % ast)
+print "Execute your program with:\n\t./ssrun %s" % args.out_file
